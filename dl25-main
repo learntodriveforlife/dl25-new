@@ -1,0 +1,1080 @@
+index.html
+
+<!doctype html>
+
+<html lang="en">
+
+<head>
+
+  <meta charset="utf-8" />
+
+  <title>Driving Test Report (DL25) — Single Page</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="description" content="Single-page DL25-style website with GOV.UK/DVSA styling and section toggling." />
+
+
+
+  <!-- Accessible, GOV.UK-inspired palette -->
+
+  <style>
+
+    :root{
+
+      /* GOV.UK / DVSA-style colours (hex codes from GOV.UK Design System) */
+
+      --govuk-black: #0b0c0c;         /* body text */
+
+      --govuk-blue: #1d70b8;          /* brand/link */
+
+      --govuk-dark-blue: #003078;     /* link hover */
+
+      --govuk-purple: #4c2c92;        /* visited */
+
+      --govuk-border: #b1b4b6;        /* borders */
+
+      --govuk-grey-100: #f3f2f1;      /* page bg */
+
+      --govuk-white: #ffffff;
+
+      --govuk-focus: #ffdd00;         /* focus outline */
+
+      --govuk-success: #00703c;
+
+      --govuk-error: #d4351c;
+
+
+
+      /* Component tokens */
+
+      --page-bg: var(--govuk-grey-100);
+
+      --text: var(--govuk-black);
+
+      --brand: var(--govuk-blue);
+
+      --panel-bg: var(--govuk-white);
+
+      --panel-border: var(--govuk-border);
+
+    }
+
+
+
+    /* Base */
+
+    html, body { height: 100%; }
+
+    body {
+
+      margin: 0;
+
+      background: var(--page-bg);
+
+      color: var(--text);
+
+      font: 16px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Helvetica Neue", Arial, system-ui, sans-serif;
+
+    }
+
+
+
+    /* Skip link */
+
+    .skip-link {
+
+      position: absolute; left: -999px; top: -999px;
+
+    }
+
+    .skip-link:focus {
+
+      left: 1rem; top: 1rem; z-index: 9999;
+
+      background: var(--govuk-focus);
+
+      color: var(--govuk-black);
+
+      padding: .5rem .75rem; border-radius: .25rem;
+
+      outline: 4px solid var(--govuk-black);
+
+    }
+
+
+
+    /* Header */
+
+    header {
+
+      background: var(--govuk-black);
+
+      color: var(--govuk-white);
+
+      padding: .75rem 1rem;
+
+    }
+
+    .brand {
+
+      display: flex; align-items: center; gap: .75rem;
+
+      max-width: 1200px; margin: 0 auto;
+
+    }
+
+    .brand img {
+
+      width: 40px; height: 40px; object-fit: contain;
+
+    }
+
+    .brand .title h1 {
+
+      font-weight: 700; font-size: 1.25rem; margin: 0;
+
+      letter-spacing: .2px;
+
+    }
+
+    .brand .title small { display: block; opacity: .85; }
+
+
+
+    /* Top actions */
+
+    .actions {
+
+      background: var(--govuk-white);
+
+      border-bottom: 1px solid var(--panel-border);
+
+      padding: .75rem 1rem;
+
+    }
+
+    .actions .wrap {
+
+      max-width: 1200px; margin: 0 auto;
+
+      display: grid; gap: .5rem;
+
+    }
+
+    .button, button {
+
+      appearance: none; border: 2px solid var(--brand);
+
+      color: var(--brand); background: transparent;
+
+      padding: .5rem .75rem; border-radius: .25rem;
+
+      font-weight: 600; cursor: pointer;
+
+    }
+
+    .button.primary { background: var(--brand); color: var(--govuk-white); }
+
+    .button:focus, button:focus {
+
+      outline: 4px solid var(--govuk-focus);
+
+      outline-offset: 2px;
+
+    }
+
+    .button:hover { border-color: var(--govuk-dark-blue); color: var(--govuk-dark-blue); }
+
+    .button.primary:hover { background: var(--govuk-dark-blue); }
+
+
+
+    /* Layout */
+
+    main { max-width: 1200px; margin: 1rem auto; padding: 0 1rem; }
+
+    .grid {
+
+      display: grid; gap: 1rem;
+
+      grid-template-columns: 1fr;
+
+    }
+
+    @media (min-width: 960px){
+
+      .grid { grid-template-columns: 2fr 1fr; }
+
+    }
+
+
+
+    /* Panels / sections */
+
+    section {
+
+      background: var(--panel-bg);
+
+      border: 1px solid var(--panel-border);
+
+      border-radius: .5rem;
+
+      overflow: hidden;
+
+    }
+
+    section header.section-head {
+
+      display: flex; align-items: center; justify-content: space-between;
+
+      padding: .75rem 1rem; background: #fff;
+
+      border-bottom: 1px solid var(--panel-border);
+
+    }
+
+    section header.section-head h2 {
+
+      margin: 0; font-size: 1.05rem;
+
+    }
+
+    .section-body {
+
+      padding: 1rem; display: block;
+
+    }
+
+    .section-body.hidden { display: none; }
+
+
+
+    /* Form elements */
+
+    .fields { display: grid; gap: .75rem; grid-template-columns: repeat(2, 1fr); }
+
+    .fields label { font-weight: 600; }
+
+    .fields input[type="text"], .fields input[type="date"], .fields input[type="time"], .fields select {
+
+      width: 100%; padding: .5rem .6rem; border: 1px solid var(--panel-border); border-radius: .25rem;
+
+    }
+
+
+
+    /* Tag / status chips */
+
+    .tags { display: flex; flex-wrap: wrap; gap: .5rem; }
+
+    .tag { padding: .25rem .5rem; border-radius: 999px; font-size: .825rem; border: 1px solid var(--panel-border); }
+
+    .tag.success { background: #eaf5ed; color: var(--govuk-success); border-color: var(--govuk-success); }
+
+    .tag.error { background: #fbe9e7; color: var(--govuk-error); border-color: var(--govuk-error); }
+
+
+
+    /* Footer */
+
+    footer {
+
+      margin-top: 2rem; padding: 1rem; background: var(--govuk-white);
+
+      border-top: 1px solid var(--panel-border); color: #555;
+
+    }
+
+    footer a { color: var(--brand); }
+
+    .legal { font-size: .9rem; }
+
+
+
+    /* Print */
+
+    @media print {
+
+      .actions, nav { display: none !important; }
+
+      body { background: #fff; }
+
+      section { break-inside: avoid; page-break-inside: avoid; }
+
+    }
+
+  </style>
+
+</head>
+
+<body>
+
+  #contentSkip to content</a>
+
+
+
+  <header aria-label="Top">
+
+    <div class="brand" role="banner">
+
+      <!-- ✅ Replace the placeholder below with your approved DVSA logo once you have permission.
+
+           For now, keep a neutral placeholder to avoid implying endorsement. -->
+
+      images/dvsa-logo.svg
+
+      <div class="title">
+
+        <h1>Driving Test Report (DL25)</h1>
+
+        <small>Single page — with section toggling</small>
+
+      </div>
+
+    </div>
+
+  </header>
+
+
+
+  <div class="actions">
+
+    <div class="wrap">
+
+      <div style="display:flex; gap:.5rem; flex-wrap:wrap">
+
+        <button class="button primary" id="expandAllBtn" type="button">Expand all sections</button>
+
+        <button class="button" id="collapseAllBtn" type="button">Collapse all sections</button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+
+  <main id="content">
+
+    <!-- NAV buttons to jump to sections -->
+
+    <nav aria-label="Section shortcuts" style="margin-bottom:1rem">
+
+      <div style="display:flex; flex-wrap:wrap; gap:.5rem">
+
+        #candidateCandidate & Test</a>
+
+        #vehicleVehicle & Instructor</a>
+
+        #eyesightEyesight Test</a>
+
+        #assessmentAssessment Criteria</a>
+
+        #manoeuvresManoeuvres</a>
+
+        #mirrors-signalsMirrors & Signals</a>
+
+        #progressProgress & Speed</a>
+
+        #junctionsJunctions & Judgement</a>
+
+        #positioningPositioning & Crossings</a>
+
+        #declarationDeclaration & Result</a>
+
+        #faultsCommon Faults (notes)</a>
+
+      </div>
+
+    </nav>
+
+
+
+    <div class="grid">
+
+      <!-- Left column -->
+
+      <div class="col">
+
+        <!-- Candidate & Test -->
+
+        <section id="candidate">
+
+          <header class="section-head">
+
+            <h2>Candidate & Test</h2>
+
+            <button class="button toggle" aria-controls="candidate-body" aria-expanded="true" type="button">Hide section</button>
+
+          </header>
+
+          <div id="candidate-body" class="section-body">
+
+            <div class="fields">
+
+              <div>
+
+                <label for="candidate-name">Candidate</label>
+
+                <input id="candidate-name" type="text" placeholder="Full name" />
+
+              </div>
+
+              <div>
+
+                <label for="driver-no">Driver number</label>
+
+                <input id="driver-no" type="text" placeholder="Driver no." />
+
+              </div>
+
+              <div>
+
+                <label for="test-cat">Test category</label>
+
+                <select id="test-cat">
+
+                  <option>Car (B)</option>
+
+                  <option>Auto (B auto)</option>
+
+                  <option>Motorcycle (A/A1/A2)</option>
+
+                  <option>LGV (C/C+E)</option>
+
+                  <option>PCV (D/D+E)</option>
+
+                </select>
+
+              </div>
+
+              <div>
+
+                <label for="app-ref">Application ref</label>
+
+                <input id="app-ref" type="text" placeholder="App ref" />
+
+              </div>
+
+              <div>
+
+                <label for="date">Date</label>
+
+                <input id="date" type="date" />
+
+              </div>
+
+              <div>
+
+                <label for="time">Time</label>
+
+                <input id="time" type="time" />
+
+              </div>
+
+              <div>
+
+                <label>ETA</label>
+
+                <div class="tags">
+
+                  <span class="tag">Physical</span>
+
+                  <span class="tag">Verbal</span>
+
+                </div>
+
+              </div>
+
+              <div>
+
+                <label>ECO (Eco-safe driving)</label>
+
+                <div class="tags">
+
+                  <span class="tag">Control</span>
+
+                  <span class="tag">Planning</span>
+
+                </div>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </section>
+
+
+
+        <!-- Vehicle & Instructor -->
+
+        <section id="vehicle">
+
+          <header class="section-head">
+
+            <h2>Vehicle & Instructor</h2>
+
+            <button class="button toggle" aria-controls="vehicle-body" aria-expanded="true" type="button">Hide section</button>
+
+          </header>
+
+          <div id="vehicle-body" class="section-body">
+
+            <div class="fields">
+
+              <div>
+
+                <label for="vehicle-reg">Vehicle reg</label>
+
+                <input id="vehicle-reg" type="text" placeholder="e.g., AB12 CDE" />
+
+              </div>
+
+              <div>
+
+                <label for="instructor-reg">Instructor reg number</label>
+
+                <input id="instructor-reg" type="text" />
+
+              </div>
+
+              <div>
+
+                <label>School car / Dual control</label>
+
+                <div class="tags">
+
+                  <span class="tag">School car</span>
+
+                  <span class="tag">Dual control</span>
+
+                </div>
+
+              </div>
+
+              <div>
+
+                <label>Transmission</label>
+
+                <div class="tags">
+
+                  <span class="tag">Manual</span>
+
+                  <span class="tag">Automatic</span>
+
+                </div>
+
+              </div>
+
+              <div>
+
+                <label>Accompanied by</label>
+
+                <div class="tags">
+
+                  <span class="tag">Ins</span>
+
+                  <span class="tag">Int</span>
+
+                  <span class="tag">Sup</span>
+
+                  <span class="tag">Other</span>
+
+                </div>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </section>
+
+
+
+        <!-- Eyesight -->
+
+        <section id="eyesight">
+
+          <header class="section-head">
+
+            <h2>Eyesight Test</h2>
+
+            <button class="button toggle" aria-controls="eyesight-body" aria-expanded="true" type="button">Hide section</button>
+
+          </header>
+
+          <div id="eyesight-body" class="section-body">
+
+            <p>Result: <span class="tag success">S</span> / <span class="tag error">D</span></p>
+
+          </div>
+
+        </section>
+
+
+
+        <!-- Assessment Criteria -->
+
+        <section id="assessment">
+
+          <header class="section-head">
+
+            <h2>Assessment Criteria (Controls & Behaviour)</h2>
+
+            <button class="button toggle" aria-controls="assessment-body" aria-expanded="true" type="button">Hide section</button>
+
+          </header>
+
+          <div id="assessment-body" class="section-body">
+
+            <ul>
+
+              <li>Precautions; Ancillary controls; Accelerator; Clutch; Gears; Footbrake; Parking brake; Steering</li>
+
+              <li>Move off: Safety; Control</li>
+
+              <li>Clearance / Obstructions</li>
+
+              <li>Response to signs / signals: Traffic signs; Road markings; Traffic lights; Traffic controllers; Other road users</li>
+
+            </ul>
+
+          </div>
+
+        </section>
+
+
+
+        <!-- Manoeuvres -->
+
+        <section id="manoeuvres">
+
+          <header class="section-head">
+
+            <h2>Manoeuvres</h2>
+
+            <button class="button toggle" aria-controls="manoeuvres-body" aria-expanded="true" type="button">Hide section</button>
+
+          </header>
+
+          <div id="manoeuvres-body" class="section-body">
+
+            <ul>
+
+              <li>Reverse / Right</li>
+
+              <li>Reverse park (road)</li>
+
+              <li>Reverse park (car park)</li>
+
+              <li>Forward park</li>
+
+              <li>Controlled stop</li>
+
+              <li>Show me / Tell me</li>
+
+            </ul>
+
+          </div>
+
+        </section>
+
+
+
+        <!-- Mirrors & Signals -->
+
+        <section id="mirrors-signals">
+
+          <header class="section-head">
+
+            <h2>Use of Mirrors & Signals</h2>
+
+            <button class="button toggle" aria-controls="mirrors-body" aria-expanded="true" type="button">Hide section</button>
+
+          </header>
+
+          <div id="mirrors-body" class="section-body">
+
+            <ul>
+
+              <li>Mirrors: Necessary, Correctly, Timed</li>
+
+              <li>Signals: Necessary, Correctly, Timed</li>
+
+              <li>Change direction / Change speed</li>
+
+            </ul>
+
+          </div>
+
+        </section>
+
+
+
+        <!-- Progress & Speed -->
+
+        <section id="progress">
+
+          <header class="section-head">
+
+            <h2>Progress, Speed & Following Distance</h2>
+
+            <button class="button toggle" aria-controls="progress-body" aria-expanded="true" type="button">Hide section</button>
+
+          </header>
+
+          <div id="progress-body" class="section-body">
+
+            <ul>
+
+              <li>Use of speed</li>
+
+              <li>Following distance</li>
+
+              <li>Appropriate speed / Undue hesitation</li>
+
+            </ul>
+
+          </div>
+
+        </section>
+
+
+
+        <!-- Junctions & Judgement -->
+
+        <section id="junctions">
+
+          <header class="section-head">
+
+            <h2>Junctions & Judgement</h2>
+
+            <button class="button toggle" aria-controls="junctions-body" aria-expanded="true" type="button">Hide section</button>
+
+          </header>
+
+          <div id="junctions-body" class="section-body">
+
+            <ul>
+
+              <li>Approach speed; Observation; Turning right; Turning left; Cutting corners</li>
+
+              <li>Judgement: Overtaking; Meeting; Crossing</li>
+
+            </ul>
+
+          </div>
+
+        </section>
+
+
+
+        <!-- Positioning & Crossings -->
+
+        <section id="positioning">
+
+          <header class="section-head">
+
+            <h2>Positioning & Pedestrian Crossings</h2>
+
+            <button class="button toggle" aria-controls="positioning-body" aria-expanded="true" type="button">Hide section</button>
+
+          </header>
+
+          <div id="positioning-body" class="section-body">
+
+            <ul>
+
+              <li>Positioning: Normal driving; Lane discipline</li>
+
+              <li>Pedestrian crossings</li>
+
+              <li>Position / Normal stop</li>
+
+              <li>Awareness / Planning</li>
+
+              <li>Ancillary controls</li>
+
+            </ul>
+
+          </div>
+
+        </section>
+
+
+
+        <!-- Declaration & Result -->
+
+        <section id="declaration">
+
+          <header class="section-head">
+
+            <h2>Declaration & Result</h2>
+
+            <button class="button toggle" aria-controls="declaration-body" aria-expanded="true" type="button">Hide section</button>
+
+          </header>
+
+          <div id="declaration-body" class="section-body">
+
+            <p><strong>Result:</strong> <span class="tag">Pass</span> / <span class="tag error">Fail</span> — <strong>Total faults</strong>: <input type="text" style="width:6rem" placeholder="0" /></p>
+
+            <div class="fields">
+
+              <div>
+
+                <label>Licence received</label>
+
+                <div class="tags"><span class="tag">Yes</span><span class="tag">No</span></div>
+
+              </div>
+
+              <div>
+
+                <label for="pcn">Pass certificate number</label>
+
+                <input id="pcn" type="text" />
+
+              </div>
+
+            </div>
+
+            <hr />
+
+            <p>
+
+              I acknowledge receipt of my pass certificate and confirm there has been no change to my health since I last applied for a licence.
+
+            </p>
+
+            <p>
+
+              I declare that the use of the test vehicle for the purpose of the test is fully covered by a valid policy of insurance which satisfies the requirements of the legislation.
+
+            </p>
+
+          </div>
+
+        </section>
+
+
+
+        <!-- Common faults (notes) -->
+
+        <section id="faults">
+
+          <header class="section-head">
+
+            <h2>Common Driving Faults — Notes</h2>
+
+            <button class="button toggle" aria-controls="faults-body" aria-expanded="false" type="button">Show section</button>
+
+          </header>
+
+          <div id="faults-body" class="section-body hidden">
+
+            <p>Examples (not exhaustive): blind spot checks missing or late; moving off unsafely; ineffective observations before manoeuvres; stalling or repeated stalling; poor co‑ordination of controls; incorrect signalling; approaching junctions too fast/slow; cutting corners; unsafe overtaking; not reacting to traffic lights/controllers; holding up following traffic; undue hesitation; inappropriate lane discipline; stopping on crossings; failure to comply with mandatory signs, and more (based on DL25 notes). </p>
+
+          </div>
+
+        </section>
+
+      </div>
+
+
+
+      <!-- Right column (you can move sections across freely) -->
+
+      <div class="col">
+
+        <!-- Add any extra panels, instructions, or references here if needed -->
+
+        <section>
+
+          <header class="section-head">
+
+            <h2>Notes</h2>
+
+            <button class="button toggle" aria-controls="notes-body" aria-expanded="true" type="button">Hide section</button>
+
+          </header>
+
+          <div id="notes-body" class="section-body">
+
+            <p>This page is a simplified, single‑page representation of the **DL25 driving test marking sheet** for mock/test documentation. For the official form and full guidance, see GOV.UK resources (links below).</p>
+
+            <ul>
+
+              <li><a href="https://assets.publishing.service.gov.uk/media/62a7437cd3bf7f03667c667a/dl25-driving-test-report.pdf" target="_blank" rel="noopener">Official DL25 (PDF)</a></li>
+
+              <li><a href="https://design-system.service.gov.uk/styles/colour/" target="_blank" rel="noopener">GOV.UK colour guidance</a></li>
+
+              <li><a href="https://www.gov.uk/guidance/get-permission-to-use-dvsa-logos" target="_blank" rel="noopener">DVSA logo permission</a></li>
+
+              <li><a href="https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/" target="_blank" rel="noopener">Open Government Licence v3.0</a></li>
+
+            </ul>
+
+          </div>
+
+        </section>
+
+      </div>
+
+    </div>
+
+  </main>
+
+
+
+  <footer>
+
+    <div class="legal">
+
+      <p>
+
+        Contains public sector information from DVSA DL25 form, reused under the
+
+        <a href="https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/" target="_blank" rel="noopener">Open Government Licence v3.0</a>.
+
+        Departmental logos and Royal Arms are excluded from OGL — do not use without permission. 
+
+      </p>
+
+    </div>
+
+  </footer>
+
+
+
+  <!-- Accessible section toggling -->
+
+  <script>
+
+    (function(){
+
+      const toggles = document.querySelectorAll('button.toggle');
+
+
+
+      function setVisibility(btn, show){
+
+        const targetId = btn.getAttribute('aria-controls');
+
+        const target = document.getElementById(targetId);
+
+        if (!target) return;
+
+
+
+        if (show){
+
+          target.classList.remove('hidden');
+
+          btn.setAttribute('aria-expanded', 'true');
+
+          btn.textContent = 'Hide section';
+
+        } else {
+
+          target.classList.add('hidden');
+
+          btn.setAttribute('aria-expanded', 'false');
+
+          btn.textContent = 'Show section';
+
+        }
+
+      }
+
+
+
+      // Initialize based on existing classes
+
+      toggles.forEach(btn => {
+
+        const targetId = btn.getAttribute('aria-controls');
+
+        const target = document.getElementById(targetId);
+
+        const isHidden = target.classList.contains('hidden');
+
+        setVisibility(btn, !isHidden);
+
+
+
+        btn.addEventListener('click', () => {
+
+          const expanded = btn.getAttribute('aria-expanded') === 'true';
+
+          setVisibility(btn, !expanded);
+
+        });
+
+      });
+
+
+
+      // Expand / Collapse All
+
+      const expandAll = document.getElementById('expandAllBtn');
+
+      const collapseAll = document.getElementById('collapseAllBtn');
+
+
+
+      expandAll.addEventListener('click', () => {
+
+        toggles.forEach(btn => setVisibility(btn, true));
+
+      });
+
+      collapseAll.addEventListener('click', () => {
+
+        toggles.forEach(btn => setVisibility(btn, false));
+
+      });
+
+
+
+      // Smooth scroll for nav
+
+      document.querySelectorAll('nav a.button[href^="#"]').forEach(a => {
+
+        a.addEventListener('click', (e) => {
+
+          const id = a.getAttribute('href').slice(1);
+
+          const el = document.getElementById(id);
+
+          if (el){
+
+            e.preventDefault();
+
+            el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+            // Ensure it’s expanded when navigated
+
+            const btn = el.querySelector('button.toggle');
+
+            if (btn) setVisibility(btn, true);
+
+          }
+
+        });
+
+      });
+
+    })();
+
+  </script>
+
+</body>
+
+</html>
+
